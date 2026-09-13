@@ -1,0 +1,69 @@
+name: Build and Push Add-on
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "addon/**"
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/ha-whatsapp-bridge-addon
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        arch:
+          - name: amd64
+            platform: linux/amd64
+            base: ghcr.io/home-assistant/amd64-base:3.19
+          - name: aarch64
+            platform: linux/arm64
+            base: ghcr.io/home-assistant/aarch64-base:3.19
+          - name: armv7
+            platform: linux/arm/v7
+            base: ghcr.io/home-assistant/armv7-base:3.19
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from addon config
+        id: version
+        run: |
+          VERSION=$(grep '^version:' addon/config.yaml | sed 's/version: "//' | sed 's/"//')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./addon
+          platforms: ${{ matrix.arch.platform }}
+          push: true
+          build-args: |
+            BUILD_FROM=${{ matrix.arch.base }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.arch.name }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.arch.name }}:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
