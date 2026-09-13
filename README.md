@@ -18,8 +18,8 @@ This project is a **Home Assistant Add-on** that runs a WhatsApp Web bridge ([wh
 ```
 HA Automation          HACS Integration         Add-on (Docker)
 ──────────────         ────────────────         ───────────────────
-notify.whatsapp   →    whatsapp_notify   →    Go + whatsmeow bridge
-  _christian            localhost:8080          WhatsApp Multi-Device
+notify.whatsapp_alice →  whatsapp_notify   →    Go + whatsmeow bridge
+                         localhost:8080          WhatsApp Multi-Device
                         /api/send               Session in /data/
 ```
 
