@@ -1,5 +1,5 @@
 name: "WhatsApp Bridge"
-description: "WhatsApp Web bridge for Home Assistant notifications. Sends messages via notify.whatsapp_notify."
+description: "WhatsApp Web bridge for Home Assistant. Send messages from automations via notify service."
 version: "1.0.1"
 slug: "whatsapp_bridge"
 url: "https://github.com/Xr1H0/ha-whatsapp-bridge"
