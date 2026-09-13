@@ -17,6 +17,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mdp/qrterminal"
+	goqrcode "github.com/skip2/go-qrcode"
 
 	"go.mau.fi/whatsmeow"
 	waProto "go.mau.fi/whatsmeow/binary/proto"
@@ -155,20 +156,18 @@ var qrPageTmpl = template.Must(template.New("qr").Parse(`<!DOCTYPE html>
 <meta http-equiv="refresh" content="30">
 <style>
 body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f2f5}
-h1{color:#128c7e}canvas{margin:20px;border:10px solid white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+h1{color:#128c7e}img{margin:20px;border:10px solid white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 p{color:#666;max-width:400px;text-align:center}
 </style>
 </head>
 <body>
 <h1>WhatsApp Bridge</h1>
-{{if .QR}}
+{{if .QRAvailable}}
 <p>Open WhatsApp on your phone → Linked Devices → Link a Device → scan this code:</p>
-<canvas id="qr"></canvas>
+<img src="/qr.png" width="256" height="256" alt="QR Code">
 <p><small>Page auto-refreshes every 30 seconds. QR code expires after ~60 seconds.</small></p>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>new QRCode(document.getElementById("qr"),{text:{{.QR}},width:256,height:256});</script>
 {{else if .Connected}}
-<p style="color:#128c7e;font-size:1.2em">✓ Connected to WhatsApp</p>
+<p style="color:#128c7e;font-size:1.2em">&#10003; Connected to WhatsApp</p>
 <p>The bridge is running and ready to send messages.</p>
 {{else}}
 <p>Waiting for QR code... Refresh in a few seconds.</p>
@@ -216,16 +215,30 @@ func startServer(client *whatsmeow.Client, port string) {
 		})
 	})
 
+	mux.HandleFunc("/qr.png", func(w http.ResponseWriter, r *http.Request) {
+		qr := getQR()
+		if qr == "" {
+			http.Error(w, "no QR code available", http.StatusNotFound)
+			return
+		}
+		png, err := goqrcode.Encode(qr, goqrcode.Medium, 256)
+		if err != nil {
+			http.Error(w, "QR generation failed", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "no-store")
+		w.Write(png)
+	})
+
 	mux.HandleFunc("/qr", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		data := struct {
-			QR        template.JS
-			Connected bool
+			QRAvailable bool
+			Connected   bool
 		}{
-			Connected: client.IsConnected(),
-		}
-		if qr := getQR(); qr != "" {
-			data.QR = template.JS(`"` + qr + `"`)
+			QRAvailable: getQR() != "",
+			Connected:   client.IsConnected(),
 		}
 		qrPageTmpl.Execute(w, data)
 	})
