@@ -1,6 +1,6 @@
 name: "WhatsApp Bridge"
 description: "WhatsApp Web bridge for Home Assistant. Send messages from automations via notify service."
-version: "1.0.2"
+version: "1.0.3"
 slug: "whatsapp_bridge"
 url: "https://github.com/Xr1H0/ha-whatsapp-bridge"
 init: false
@@ -13,16 +13,16 @@ arch:
   - i386
 
 ports:
-  8080/tcp: 8080
+  8456/tcp: 8456
 
 ports_description:
-  8080/tcp: "REST API + QR pairing page"
+  8456/tcp: "REST API + QR pairing page"
 
 map:
   - data:rw
 
 options:
-  port: 8080
+  port: 8456
   log_level: info
 
 schema:

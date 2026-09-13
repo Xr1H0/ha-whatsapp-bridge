@@ -19,7 +19,7 @@ This project is a **Home Assistant Add-on** that runs a WhatsApp Web bridge ([wh
 HA Automation          HACS Integration         Add-on (Docker)
 ──────────────         ────────────────         ───────────────────
 notify.whatsapp_alice →  whatsapp_notify   →    Go + whatsmeow bridge
-                         localhost:8080          WhatsApp Multi-Device
+                         localhost:8456          WhatsApp Multi-Device
                         /api/send               Session in /data/
 ```
 
@@ -46,7 +46,7 @@ The Add-on implements the **WhatsApp Multi-Device protocol** — after the initi
 ### Step 2 — Start and pair WhatsApp
 
 1. Start the **WhatsApp Bridge** add-on
-2. Open `http://<your-ha-ip>:8080/qr` in a browser
+2. Open `http://<your-ha-ip>:8456/qr` in a browser
 3. On your phone: **WhatsApp → Linked Devices → Link a Device** → scan the QR code
 4. Done — the session is saved to `/data/whatsapp.db` and survives restarts
 
@@ -70,13 +70,13 @@ notify:
   - platform: whatsapp_notify
     name: whatsapp_alice
     host: localhost      # same machine as HA
-    port: 8080
+    port: 8456
     recipient: "4912345678901"   # phone number without +
 
   - platform: whatsapp_notify
     name: whatsapp_bob
     host: localhost
-    port: 8080
+    port: 8456
     recipient: "4912345678902"
 ```
 
@@ -115,7 +115,7 @@ action:
 
 ## API
 
-The bridge exposes a simple REST API on port 8080:
+The bridge exposes a simple REST API on port 8456:
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -136,13 +136,13 @@ The bridge exposes a simple REST API on port 8080:
 
 ## Troubleshooting
 
-**QR not loading** — Check that the add-on is running and port 8080 is accessible from your browser.
+**QR not loading** — Check that the add-on is running and port 8456 is accessible from your browser.
 
 **Not connected after restart** — Check add-on logs. If the session expired, re-pair: stop the add-on, delete `/data/whatsapp.db`, restart.
 
 **`notify.whatsapp_alice` not found** — Check that the custom component is installed and HA was restarted after adding the `configuration.yaml` entry.
 
-**Messages not sending** — Verify `GET http://<ha-ip>:8080/api/status` returns `"connected": true`.
+**Messages not sending** — Verify `GET http://<ha-ip>:8456/api/status` returns `"connected": true`.
 
 ---
 

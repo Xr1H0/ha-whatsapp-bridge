@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Change default port from 8080 to 8456 to avoid conflicts with common services
+
 ## 1.0.2
 
 - Add CHANGELOG.md

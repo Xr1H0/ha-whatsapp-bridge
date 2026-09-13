@@ -62,7 +62,7 @@ func getPort() string {
 	if p := os.Getenv("PORT"); p != "" {
 		return p
 	}
-	return "8080"
+	return "8456"
 }
 
 func setQR(code string) {
