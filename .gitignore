@@ -1,0 +1,5 @@
+addon/whatsapp-bridge
+addon/store/
+*.db
+*.db-shm
+*.db-wal

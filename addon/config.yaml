@@ -1,0 +1,32 @@
+name: "WhatsApp Bridge"
+description: "WhatsApp Web bridge for Home Assistant notifications. Sends messages via notify.whatsapp_notify."
+version: "1.0.0"
+slug: "whatsapp_bridge"
+url: "https://github.com/hornch/ha-whatsapp-bridge"
+init: false
+
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+
+ports:
+  8080/tcp: 8080
+
+ports_description:
+  8080/tcp: "REST API + QR pairing page"
+
+map:
+  - data:rw
+
+options:
+  port: 8080
+  log_level: info
+
+schema:
+  port: int
+  log_level: list(trace|debug|info|notice|warning|error|fatal)
+
+image: "ghcr.io/hornch/ha-whatsapp-bridge-addon/{arch}"
