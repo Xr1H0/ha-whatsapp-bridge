@@ -2,7 +2,7 @@ name: "WhatsApp Bridge"
 description: "WhatsApp Web bridge for Home Assistant notifications. Sends messages via notify.whatsapp_notify."
 version: "1.0.0"
 slug: "whatsapp_bridge"
-url: "https://github.com/hornch/ha-whatsapp-bridge"
+url: "https://github.com/Xr1H0/ha-whatsapp-bridge"
 init: false
 
 arch:
@@ -29,4 +29,4 @@ schema:
   port: int
   log_level: list(trace|debug|info|notice|warning|error|fatal)
 
-image: "ghcr.io/hornch/ha-whatsapp-bridge-addon/{arch}"
+image: "ghcr.io/xr1h0/ha-whatsapp-bridge-addon/{arch}"

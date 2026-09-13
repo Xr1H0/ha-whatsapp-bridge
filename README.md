@@ -23,7 +23,7 @@ In Home Assistant: **Settings → Add-ons → Add-on Store → ⋮ → Repositor
 
 Add this URL:
 ```
-https://github.com/hornch/ha-whatsapp-bridge
+https://github.com/Xr1H0/ha-whatsapp-bridge
 ```
 
 Then install **WhatsApp Bridge** from the list.
